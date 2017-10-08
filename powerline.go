@@ -106,23 +106,41 @@ func (p *powerline) draw() string {
 
 	var buffer bytes.Buffer
 	for idx, segment := range p.Segments {
+		isFirstSeg := idx == 0
+		isLastSeg := idx >= len(p.Segments)-1
+
 		var separatorBackground string
-		if idx >= len(p.Segments)-1 {
+		if isLastSeg {
 			separatorBackground = p.reset
 		} else {
 			nextSegment := p.Segments[idx+1]
 			separatorBackground = p.bgColor(nextSegment.background)
 		}
 
+		content := segment.content
+		// FIXME: If config this?
+		if isFirstSeg {
+			if content[0] == ' ' {
+				content = content[1:]
+			}
+		}
+		if isLastSeg {
+			if content[len(content)-1] == ' ' {
+				content = content[:len(content)-1]
+			}
+		}
+
 		buffer.WriteString(p.fgColor(segment.foreground))
 		buffer.WriteString(p.bgColor(segment.background))
-		buffer.WriteString(segment.content)
+		buffer.WriteString(content)
 		buffer.WriteString(separatorBackground)
 		buffer.WriteString(p.fgColor(segment.separatorForeground))
 		buffer.WriteString(segment.separator)
 		buffer.WriteString(p.reset)
 	}
-	buffer.WriteRune(' ')
+	if !*p.args.RightPrompt {
+		buffer.WriteRune(' ')
+	}
 
 	drawnResult := buffer.String()
 	if *p.args.EastAsianWidth {
