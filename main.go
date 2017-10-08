@@ -31,6 +31,7 @@ type args struct {
 	CwdMaxDirSize      *int
 	ColorizeHostname   *bool
 	EastAsianWidth     *bool
+	RightPrompt        *bool
 	PromptOnNewLine    *bool
 	Mode               *string
 	Theme              *string
@@ -110,6 +111,8 @@ func main() {
 			"Colorize the hostname based on a hash of itself"),
 		EastAsianWidth: flag.Bool("east-asian-width", false,
 			"Use East Asian Ambiguous Widths"),
+		RightPrompt: flag.Bool("right-prompt", false,
+			"Change output for RPROMPT usage"),
 		PromptOnNewLine: flag.Bool("newline", false,
 			"Show the prompt on a new line"),
 		Mode: flag.String("mode", "patched",
