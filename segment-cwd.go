@@ -114,11 +114,20 @@ func segmentCwd(p *powerline) {
 			}
 
 			for idx, pathSegment := range pathSegments {
+				isFirstDir := idx == 0
 				isLastDir := idx == len(pathSegments)-1
 				foreground, background := getColor(p, pathSegment, isLastDir)
 
+				prefix := ""
+				if isFirstDir {
+					prefix = " "
+				}
+				suffix := "/"
+				if isLastDir {
+					suffix = " "
+				}
 				segment := segment{
-					content:    fmt.Sprintf(" %s ", escapeVariables(p, maybeShortenName(p, pathSegment.path))),
+					content:    fmt.Sprintf("%s%s%s", prefix, escapeVariables(p, maybeShortenName(p, pathSegment.path)), suffix),
 					foreground: foreground,
 					background: background,
 				}
