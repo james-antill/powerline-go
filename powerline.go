@@ -106,7 +106,7 @@ func (p *powerline) draw() string {
 
 	var buffer bytes.Buffer
 	for idx, segment := range p.Segments {
-		isFirstSeg := idx == 0
+		isFirstSeg := true // idx == 0
 		isLastSeg := idx >= len(p.Segments)-1
 
 		var separatorBackground string
