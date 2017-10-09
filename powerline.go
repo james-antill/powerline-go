@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/mattn/go-runewidth"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/text/width"
 	"os"
@@ -105,10 +106,9 @@ func (p *powerline) draw() string {
 
 	shellActualLength := 0
 	if shellMaxLength > 0 {
-		// FIXME: This works based on number of characters, and not
-		//        character width as shown on the screen.
+		rlen := runewidth.StringWidth
 		for _, segment := range p.Segments {
-			shellActualLength += len(segment.content) + len(segment.separator)
+			shellActualLength += rlen(segment.content) + rlen(segment.separator)
 		}
 		for shellActualLength > shellMaxLength {
 			minPriority := MaxInteger
@@ -125,17 +125,17 @@ func (p *powerline) draw() string {
 			}
 
 			segment := &p.Segments[minPrioritySegmentId]
-			rmlen := len(segment.content) + len(segment.separator)
+			rmlen := rlen(segment.content) + rlen(segment.separator)
 			if shellActualLength-len(segment.content) < shellMaxLength {
 				// This removal will be enough, so change the content to '...'
-				shellActualLength -= len(segment.content) + len(segment.separator)
+				shellActualLength -= rmlen
 				segment.content = ellipsis
 			} else if shellActualLength-rmlen <= shellMaxLength {
 				// Ignore the sep. this time so we don't overflow and still get a sep.
-				shellActualLength -= len(segment.content)
+				shellActualLength -= rlen(segment.content)
 				p.Segments = append(p.Segments[:minPrioritySegmentId], p.Segments[minPrioritySegmentId+1:]...)
 			} else {
-				shellActualLength -= len(segment.content) + len(segment.separator)
+				shellActualLength -= rmlen
 				p.Segments = append(p.Segments[:minPrioritySegmentId], p.Segments[minPrioritySegmentId+1:]...)
 			}
 		}
