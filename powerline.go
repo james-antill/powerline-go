@@ -102,6 +102,8 @@ func (p *powerline) draw() string {
 
 	shellActualLength := 0
 	if shellMaxLength > 0 {
+		// FIXME: This works based on number of characters, and not
+		//        character width as shown on the screen.
 		for _, segment := range p.Segments {
 			shellActualLength += len(segment.content) + len(segment.separator)
 		}
@@ -114,10 +116,24 @@ func (p *powerline) draw() string {
 					minPrioritySegmentId = idx
 				}
 			}
-			if minPrioritySegmentId != -1 {
-				segment := p.Segments[minPrioritySegmentId]
-				p.Segments = append(p.Segments[:minPrioritySegmentId], p.Segments[minPrioritySegmentId+1:]...)
+			if minPrioritySegmentId == -1 {
+				// Fail, we didn't find anything to remove.
+				break
+			}
+
+			segment := &p.Segments[minPrioritySegmentId]
+			rmlen := len(segment.content) + len(segment.separator)
+			if shellActualLength-len(segment.content) < shellMaxLength {
+				// This removal will be enough, so change the content to '...'
 				shellActualLength -= len(segment.content) + len(segment.separator)
+				segment.content = ellipsis
+			} else if shellActualLength-rmlen <= shellMaxLength {
+				// Ignore the sep. this time so we don't overflow and still get a sep.
+				shellActualLength -= len(segment.content)
+				p.Segments = append(p.Segments[:minPrioritySegmentId], p.Segments[minPrioritySegmentId+1:]...)
+			} else {
+				shellActualLength -= len(segment.content) + len(segment.separator)
+				p.Segments = append(p.Segments[:minPrioritySegmentId], p.Segments[minPrioritySegmentId+1:]...)
 			}
 		}
 	}
