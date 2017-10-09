@@ -162,7 +162,7 @@ func main() {
 	priorities := map[string]int{}
 	priorityList := strings.Split(*args.Priority, ",")
 	for idx, priority := range priorityList {
-		priorities[priority] = len(priorityList) - idx
+		priorities[priority] = 1000 * (len(priorityList) - idx)
 	}
 
 	powerline := NewPowerline(args, getValidCwd(), priorities)

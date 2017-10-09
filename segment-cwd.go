@@ -117,19 +117,29 @@ func segmentCwd(p *powerline) {
 				isFirstDir := idx == 0
 				isLastDir := idx == len(pathSegments)-1
 				foreground, background := getColor(p, pathSegment, isLastDir)
+				priority := 0
 
 				prefix := ""
 				if isFirstDir {
+					priority = 3
 					prefix = " "
 				}
 				suffix := "/"
 				if isLastDir {
+					priority = 4
 					suffix = " "
+				}
+				if priority == 0 && idx == 1 {
+					priority = 2
+				}
+				if priority == 0 && idx == len(pathSegments)-1 {
+					priority = 1
 				}
 				segment := segment{
 					content:    fmt.Sprintf("%s%s%s", prefix, escapeVariables(p, maybeShortenName(p, pathSegment.path)), suffix),
 					foreground: foreground,
 					background: background,
+					priority:   priority,
 				}
 
 				if !(pathSegment.home && p.theme.HomeSpecialDisplay) && !isLastDir {

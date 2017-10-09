@@ -72,6 +72,9 @@ func (p *powerline) appendSegment(origin string, segment segment) {
 		segment.separatorForeground = segment.background
 	}
 	priority, _ := p.priorities[origin]
+	if segment.priority > 0 {
+		priority += segment.priority
+	}
 	segment.priority = priority
 	p.Segments = append(p.Segments, segment)
 }
