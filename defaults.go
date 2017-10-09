@@ -30,6 +30,9 @@ var symbolTemplates = map[string]Symbols{
 		RepoConflicted: "\u273C",
 	},
 	"flat": {
+		Lock:    "R",
+		Network: "S",
+
 		RepoDetached:   "\u2693",
 		RepoAhead:      "\u2B06",
 		RepoBehind:     "\u2B07",
